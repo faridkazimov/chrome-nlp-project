@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NLP Analyzer</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 380px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f8f9fa;
+      color: #1a1a2e;
+      padding: 16px;
+    }
+
+    h1 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #1a1a2e;
+    }
+
+    #input-area {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    textarea {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 13px;
+      resize: vertical;
+      min-height: 60px;
+      font-family: inherit;
+    }
+
+    textarea:focus { outline: none; border-color: #4361ee; }
+
+    button {
+      padding: 10px 16px;
+      background: #4361ee;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    button:hover { background: #3a56d4; }
+    button:disabled { background: #aaa; cursor: not-allowed; }
+
+    #loading {
+      display: none;
+      text-align: center;
+      padding: 20px;
+      color: #666;
+      font-size: 13px;
+    }
+
+    #error {
+      display: none;
+      background: #fee;
+      color: #c00;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      margin-bottom: 12px;
+    }
+
+    #results { display: none; }
+
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .card-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #888;
+      margin-bottom: 8px;
+    }
+
+    .label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .label-text {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .score {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .score-bar {
+      height: 4px;
+      background: #eee;
+      border-radius: 2px;
+      margin-top: 6px;
+      overflow: hidden;
+    }
+
+    .score-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.4s ease;
+    }
+
+    .sentiment-positive { background: #22c55e; }
+    .sentiment-negative { background: #ef4444; }
+    .sentiment-neutral  { background: #f59e0b; }
+    .classification-fill { background: #4361ee; }
+
+    .entity-tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      margin: 3px 4px 3px 0;
+    }
+
+    .entity-PER  { background: #dbeafe; color: #1d4ed8; }
+    .entity-ORG  { background: #fce7f3; color: #be185d; }
+    .entity-LOC  { background: #dcfce7; color: #15803d; }
+    .entity-MISC { background: #fef3c7; color: #92400e; }
+
+    .entity-label {
+      font-size: 10px;
+      font-weight: 700;
+      opacity: 0.7;
+      margin-left: 4px;
+    }
+
+    .no-entities {
+      color: #999;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <h1>NLP Text Analyzer</h1>
+
+  <div id="input-area">
+    <textarea id="text-input" placeholder="Select text on a page or type here..."></textarea>
+    <button id="analyze-btn">Analyze</button>
+  </div>
+
+  <div id="error"></div>
+  <div id="loading">Analyzing...</div>
+
+  <div id="results">
+    <div class="card">
+      <div class="card-title">Sentiment</div>
+      <div class="label-row">
+        <span class="label-text" id="sentiment-label"></span>
+        <span class="score" id="sentiment-score"></span>
+      </div>
+      <div class="score-bar">
+        <div class="score-fill" id="sentiment-bar"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Classification</div>
+      <div class="label-row">
+        <span class="label-text" id="class-label"></span>
+        <span class="score" id="class-score"></span>
+      </div>
+      <div class="score-bar">
+        <div class="score-fill classification-fill" id="class-bar"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Named Entities</div>
+      <div id="entities-container"></div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
